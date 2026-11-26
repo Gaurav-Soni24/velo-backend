@@ -1,38 +1,53 @@
 const express = require('express');
-const { body, query } = require('express-validator');
-const adminController = require('../controllers/adminController');
+const { body } = require('express-validator');
+const admin = require('../controllers/adminController');
+const { adminAuth } = require('../middleware/auth');
 const { handleValidationErrors } = require('../middleware/validation');
+const { asyncHandler } = require('../middleware/errorHandler');
 
+/** Admin API used by the admin dashboard. Mounted at /api/admin. */
 const router = express.Router();
+router.use(adminAuth);
 
-// POST /admin/bike/add
+const h = asyncHandler;
+const ALERT_TYPES = ['missing_mismatch', 'returned_manually', 'camera_issue', 'other'];
+
+router.get('/dashboard/stats', h(admin.getStats));
+router.get('/events', h(admin.getEvents));
+router.get('/devices', h(admin.getDevices));
+
+router.get('/bikes', h(admin.getBikes));
 router.post(
-  '/bike/add',
-  body('bikeId').isInt().withMessage('bikeId must be an integer'),
+  '/bikes',
+  body('bikeId').isInt({ min: 1 }).withMessage('bikeId must be a positive integer'),
   handleValidationErrors,
-  adminController.addBike
+  h(admin.createBike)
 );
+router.patch('/bikes/:id', h(admin.updateBike));
+router.delete('/bikes/:id', h(admin.deleteBike));
 
-// GET /admin/bike/all
-router.get('/bike/all', adminController.getAllBikes);
-
-// PATCH /admin/bike/update/:id
-router.patch('/bike/update/:id', adminController.updateBike);
-
-// GET /admin/rentals
-router.get('/rentals', adminController.getRentals);
-
-// GET /admin/alerts
-router.get('/alerts', adminController.getAlerts);
-
-// POST /admin/alert/manual
+router.get('/users', h(admin.getUsers));
 router.post(
-  '/alert/manual',
+  '/users',
+  body('name').trim().notEmpty().withMessage('name is required'),
+  body('rfidTag').trim().notEmpty().withMessage('rfidTag is required'),
+  handleValidationErrors,
+  h(admin.createUser)
+);
+router.patch('/users/:id', h(admin.updateUser));
+router.delete('/users/:id', h(admin.deleteUser));
+
+router.get('/rentals', h(admin.getRentals));
+
+router.get('/alerts', h(admin.getAlerts));
+router.post(
+  '/alerts',
   body('bikeId').notEmpty().withMessage('bikeId is required'),
-  body('type').isIn(['missing_mismatch', 'returned_manually', 'camera_issue']).withMessage('Invalid alert type'),
-  body('message').notEmpty().withMessage('message is required'),
+  body('type').isIn(ALERT_TYPES).withMessage('Invalid alert type'),
+  body('message').trim().notEmpty().withMessage('message is required'),
   handleValidationErrors,
-  adminController.createManualAlert
+  h(admin.createAlert)
 );
+router.patch('/alerts/:id/resolve', h(admin.resolveAlert));
 
 module.exports = router;

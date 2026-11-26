@@ -1,30 +1,29 @@
-﻿{
-    "name":  "velo-backend",
-    "version":  "1.0.0",
-    "description":  "REST API for the Velo IoT smart cycle-sharing system: RFID rent/return, admin APIs, camera-based missing-bike alerts.",
-    "main":  "server.js",
-    "private":  false,
-    "scripts":  {
-                    "start":  "node server.js",
-                    "dev":  "nodemon server.js"
-                },
-    "keywords":  [
-                     "iot",
-                     "rfid",
-                     "express",
-                     "mongodb",
-                     "bike-sharing",
-                     "arduino"
-                 ],
-    "license":  "MIT",
-    "dependencies":  {
-                         "cors":  "2.8.5",
-                         "dotenv":  "17.2.3",
-                         "express":  "5.1.0",
-                         "express-validator":  "7.3.0",
-                         "mongoose":  "8.19.4"
-                     },
-    "devDependencies":  {
-                            "nodemon":  "^3.1.9"
-                        }
+{
+  "name": "velo-backend",
+  "version": "2.0.0",
+  "description": "Cloud API for the Velo IoT smart cycle-sharing system: RFID rent/return from a ground station, camera reconciliation and alerts, and the admin API.",
+  "main": "server.js",
+  "private": false,
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "seed": "node scripts/seed.js",
+    "dev:memory": "node scripts/dev-memory.js",
+    "ground-station": "node ground-station/ground-station.js --simulator",
+    "test": "node --test tests/*.test.js"
+  },
+  "keywords": ["iot", "rfid", "arduino", "express", "mongodb", "bike-sharing"],
+  "license": "MIT",
+  "dependencies": {
+    "cors": "2.8.5",
+    "dotenv": "17.2.3",
+    "express": "5.1.0",
+    "express-validator": "7.3.0",
+    "mongoose": "8.19.4"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^10.1.4",
+    "nodemon": "^3.1.9",
+    "supertest": "^7.1.4"
+  }
 }
