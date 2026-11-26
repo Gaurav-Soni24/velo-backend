@@ -1,4 +1,11 @@
-# Bike Rental + IoT System Backend
+# Velo — IoT Bike Rental Backend
+
+REST API for **Velo**, an IoT smart cycle-sharing system (Arduino + RFID/QR unlock, camera monitoring, admin dashboard). It was published as a research paper: *Velo: An IoT-Based SmartCycle Sharing System for Sustainable Urban Mobility*, JETIR, Vol. 13, Issue 3, March 2026 (http://www.jetir.org/view?paper=JETIRHQ06008).
+
+- **Admin dashboard:** https://github.com/Gaurav-Soni24/velo-frontend (live: https://velo-frontend.vercel.app)
+- **Rider app:** https://github.com/Gaurav-Soni24/Velo (live: https://velo-flame.vercel.app)
+
+**Tech stack:** Node.js, Express, MongoDB (Mongoose), express-validator.
 
 A complete backend solution for managing bike rentals with IoT integration, RFID system, and AI camera monitoring.
 
@@ -12,7 +19,7 @@ A complete backend solution for managing bike rentals with IoT integration, RFID
 
 ## Project Structure
 
-\`\`\`
+```
 src/
 ├── config/          # Database configuration
 ├── controllers/     # Business logic
@@ -20,7 +27,7 @@ src/
 ├── models/         # Database schemas
 ├── middleware/     # Express middleware
 └── utils/          # Utility functions and constants
-\`\`\`
+```
 
 ## Models
 
@@ -70,24 +77,24 @@ src/
 ## Installation
 
 1. **Clone the repository**
-   \`\`\`bash
-   git clone <repository-url>
-   cd bike-rental-iot-backend
-   \`\`\`
+   ```bash
+   git clone https://github.com/Gaurav-Soni24/velo-backend.git
+   cd velo-backend
+   ```
 
 2. **Install dependencies**
-   \`\`\`bash
+   ```bash
    npm install
-   \`\`\`
+   ```
 
 3. **Setup MongoDB**
    - Ensure MongoDB is running locally on `mongodb://localhost:27017`
    - Or modify the MONGODB_URI in your .env file
 
 4. **Create .env file**
-   \`\`\`bash
+   ```bash
    cp .env.example .env
-   \`\`\`
+   ```
    
    Configure the following variables:
    - `PORT` - Server port (default: 5000)
@@ -96,51 +103,51 @@ src/
    - `MISSING_BIKE_TIMEOUT_MINUTES` - Minutes before marking bike as missing (default: 10)
 
 5. **Start the server**
-   \`\`\`bash
+   ```bash
    npm run dev        # Development with nodemon
    npm start          # Production
-   \`\`\`
+   ```
 
 ## Testing
 
 ### Health Check
-\`\`\`bash
+```bash
 curl http://localhost:5000/health
-\`\`\`
+```
 
 ### Rent a Bike
-\`\`\`bash
+```bash
 curl -X POST http://localhost:5000/rent \
   -H "Content-Type: application/json" \
   -d '{ "rfidTag": "user123" }'
-\`\`\`
+```
 
 ### Return a Bike
-\`\`\`bash
+```bash
 curl -X POST http://localhost:5000/return \
   -H "Content-Type: application/json" \
   -d '{ "rfidTag": "user123" }'
-\`\`\`
+```
 
 ### Get All Bikes
-\`\`\`bash
+```bash
 curl http://localhost:5000/admin/bike/all
-\`\`\`
+```
 
 ### Get Alerts
-\`\`\`bash
+```bash
 curl http://localhost:5000/admin/alerts
-\`\`\`
+```
 
 ### Update Camera Status
-\`\`\`bash
+```bash
 curl -X POST http://localhost:5000/camera/update-status \
   -H "Content-Type: application/json" \
   -d '{
     "bikesPresent": ["bike_object_id_1", "bike_object_id_2"],
     "timestamp": "2024-01-15T10:30:00Z"
   }'
-\`\`\`
+```
 
 ## Error Handling
 
@@ -152,17 +159,17 @@ The API uses standard HTTP status codes:
 - `500` - Internal Server Error
 
 All error responses follow this format:
-\`\`\`json
+```json
 {
   "error": "Error message"
 }
-\`\`\`
+```
 
 ## Database Seeding
 
 To add sample data for testing, run:
 
-\`\`\`bash
+```bash
 # MongoDB CLI
 mongo
 
@@ -174,7 +181,7 @@ db.users.insertOne({ name: "John Doe", rfidTag: "user123" })
 
 # Add sample bike
 db.bikes.insertOne({ bikeId: 1, status: "available" })
-\`\`\`
+```
 
 ## Environment Variables
 
