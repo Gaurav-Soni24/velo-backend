@@ -57,7 +57,7 @@ Demo RFID cards created by the seed script: `04A1B2C3` Aarav, `04D4E5F6` Diya, `
 ## Run with a real database
 
 ```bash
-cp .env.example .env      # set MONGODB_URI and DEVICE_API_KEY
+cp .env.example .env      # set MONGODB_URI, DEVICE_API_KEY and the admin login
 npm run seed              # demo data (npm run seed -- --reset wipes first)
 npm run dev               # or: npm start
 ```
@@ -68,8 +68,13 @@ npm run dev               # or: npm start
 |---|---|---|
 | `PORT` | `5000` | Server port |
 | `MONGODB_URI` | `mongodb://localhost:27017/bike-rental-iot` | Database connection string |
-| `DEVICE_API_KEY` | *(empty)* | Ground station must send it as `x-device-key`. Empty means open (development only). |
-| `ADMIN_API_KEY` | *(empty)* | Optional `x-admin-key` for the admin API |
+| `DEVICE_API_KEY` | *(empty)* | Ground station must send it as `x-device-key`. Required in production (the device API answers 503 without it); empty means open in development. |
+| `ADMIN_EMAIL` | *(empty)* | The admin account's email |
+| `ADMIN_PASSWORD_HASH` | *(empty)* | Recommended. Make it with `npm run hash-password -- "your password"` (scrypt) |
+| `ADMIN_PASSWORD` | *(empty)* | Plain-text alternative to the hash (server side only) |
+| `JWT_SECRET` | *(empty)* | 32+ random characters; signs admin session tokens. Without it admin login is disabled (503) |
+| `ADMIN_SESSION_HOURS` | `12` | How long an admin stays signed in |
+| `ADMIN_API_KEY` | *(empty)* | Optional `x-admin-key` for scripts that call the admin API without signing in |
 | `CORS_ORIGIN` | `*` | Comma-separated allowed browser origins |
 | `MISSING_BIKE_TIMEOUT_MINUTES` | `10` | Camera absence before a bike is flagged missing |
 | `DEVICE_OFFLINE_AFTER_SECONDS` | `90` | Heartbeat gap before a ground station shows as offline |
@@ -144,7 +149,8 @@ Eleven end-to-end tests run the real API against an in-memory MongoDB: rent and 
 - **One reader, one endpoint:** `/scan` toggles between rent and return so the Arduino stays simple.
 - **Camera reconciliation:** RFID is what the system believes, the camera is what is true. Alerts come from the difference.
 - **Serverless-ready:** the app exports itself and connects to MongoDB lazily, so it runs on Vercel (`vercel.json`) or as a normal server.
-- **Not production-complete:** the admin API has only an optional shared key. A real deployment should add proper admin login.
+- **Admin login:** `POST /api/admin/auth/login` with `{ email, password }` returns a signed token (HS256, 12 hours). Every other `/api/admin` route needs `Authorization: Bearer <token>`. Five failed logins from one IP lock sign-in for 15 minutes. `npm run dev:memory` uses a demo login (`admin@velo.local` / `velo-demo-admin`) when `.env` sets none.
+- **Not production-complete:** one admin account only, and the login rate limit lives in memory (it resets on restart and is per instance on serverless hosts).
 
 ## License
 

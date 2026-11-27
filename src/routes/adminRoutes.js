@@ -1,13 +1,17 @@
 const express = require('express');
 const { body } = require('express-validator');
 const admin = require('../controllers/adminController');
-const { adminAuth } = require('../middleware/auth');
+const { adminAuth, login } = require('../middleware/auth');
 const { handleValidationErrors } = require('../middleware/validation');
 const { asyncHandler } = require('../middleware/errorHandler');
 
 /** Admin API used by the admin dashboard. Mounted at /api/admin. */
 const router = express.Router();
+
+// Sign in is the only admin route that works without a token.
+router.post('/auth/login', login);
 router.use(adminAuth);
+router.get('/auth/me', (req, res) => res.json({ success: true, data: { email: req.admin.sub, role: req.admin.role } }));
 
 const h = asyncHandler;
 const ALERT_TYPES = ['missing_mismatch', 'returned_manually', 'camera_issue', 'other'];

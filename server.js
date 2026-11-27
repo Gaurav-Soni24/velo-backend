@@ -7,6 +7,9 @@ const deviceRoutes = require('./src/routes/deviceRoutes');
 const adminRoutes = require('./src/routes/adminRoutes');
 
 const app = express();
+app.disable('x-powered-by');
+// Behind Vercel or another proxy, use the client IP for the login rate limit.
+app.set('trust proxy', 1);
 
 const origins = (process.env.CORS_ORIGIN || '*').split(',').map((s) => s.trim());
 app.use(cors({ origin: origins.includes('*') ? true : origins }));

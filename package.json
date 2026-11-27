@@ -8,6 +8,7 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "seed": "node scripts/seed.js",
+    "hash-password": "node scripts/hash-password.js",
     "dev:memory": "node scripts/dev-memory.js",
     "ground-station": "node ground-station/ground-station.js --simulator",
     "test": "node --test tests/*.test.js"
